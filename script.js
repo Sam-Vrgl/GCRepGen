@@ -286,3 +286,19 @@ function generateViolinPlot(wellsData, allWells) {
     responsive: true 
 });
 }
+
+window.onbeforeprint = function() {
+    const plotDiv = document.getElementById('violinPlot');
+    Plotly.relayout(plotDiv, {
+        width: 600, 
+        height: 400
+    });
+};
+
+window.onafterprint = function() {
+    const plotDiv = document.getElementById('violinPlot');
+    Plotly.relayout(plotDiv, {
+        width: null,
+        height: 500
+    });
+};
