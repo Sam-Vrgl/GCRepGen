@@ -428,13 +428,15 @@ td:first-child {
         flex-direction: row !important;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 20px;
-        margin-bottom: 10px;
+        gap: 10px;
+        width: 100%;
     }
 
     .left-panel {
         flex: 0 0 55%;
         width: 55%;
+        max-width: 55%; /* STRICTLY enforce width */
+        overflow: hidden; /* Cut off anything that tries to escape */
     }
 
     .right-panel {
@@ -442,9 +444,18 @@ td:first-child {
         width: 42%;
     }
 
-    #violinPlot {
-        height: 450px;
-        width: 100%;
+    #violinPlot, 
+    .js-plotly-plot, 
+    .plot-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 400px !important; /* Force a shorter height for print */
+    }
+
+    /* Fix the SVG inside Plotly to stop it from expanding */
+    .js-plotly-plot .plotly svg {
+        width: 100% !important;
+        height: 100% !important;
     }
 
     .plates-row {

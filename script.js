@@ -120,7 +120,9 @@ function displayResults(resultData, rawData) {
     document.getElementById('results').classList.remove('hidden');
 
     // 1. Generate Violin Plot
-    generateViolinPlot(wellsData, allWells);
+    setTimeout(() => {
+        generateViolinPlot(wellsData, allWells);
+    }, 0);
 
     // 2. Generate Main Plate Diagram
     const plateContainer = document.getElementById('plateDiagram');
@@ -246,7 +248,7 @@ function generateViolinPlot(wellsData, allWells) {
         type: 'violin',
         x: xValues,
         y: yValues,
-        points: 'none',
+        points: false,
         box: {
             visible: true
         },
@@ -279,5 +281,8 @@ function generateViolinPlot(wellsData, allWells) {
         showlegend: false
     };
 
-    Plotly.newPlot('violinPlot', [trace], layout, { displayModeBar: false });
+    Plotly.newPlot('violinPlot', [trace], layout, { 
+    displayModeBar: false, 
+    responsive: true 
+});
 }
