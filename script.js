@@ -158,17 +158,24 @@ function displayResults(resultData, rawData) {
         `;
         plateContainer.appendChild(wellDiv);
     });
-
-    // 3. Generate Placeholder Plate Diagram
+// 3. Generate Manual Input Plate Diagram
     const plateContainer2 = document.getElementById('plateDiagram2');
     plateContainer2.innerHTML = '';
+    
     allWells.forEach(well => {
         const wellDiv = document.createElement('div');
         wellDiv.className = 'well-container';
+        
+        // We add a wrapper to hold the input and the % sign side-by-side
         wellDiv.innerHTML = `
             <div class="well-label">${well}</div>
-            <div class="well-circle">
-                <div class="percentage" style="font-size: 10px; color: #ccc;">0%</div>
+            <div class="well-circle" style="flex-direction: row; gap: 1px;">
+                <input type="number" 
+                       class="manual-input" 
+                       min="0" 
+                       max="100" 
+                       oninput="handleManualInput(this)">
+                <span class="percent-symbol">%</span>
             </div>
         `;
         plateContainer2.appendChild(wellDiv);
@@ -302,3 +309,26 @@ window.onafterprint = function() {
         height: 500
     });
 };
+
+function handleManualInput(inputElement) {
+    // Get the value typed by the user
+    const value = parseFloat(inputElement.value);
+    
+    // Find the parent circle to change its color
+    const circle = inputElement.closest('.well-circle');
+    
+    // Remove existing status classes
+    circle.classList.remove('status-green', 'status-black');
+
+    // If empty or invalid, leave it default gray
+    if (isNaN(value) || inputElement.value === '') {
+        return;
+    }
+
+    // Apply logic: > 15 is Black, otherwise Green
+    if (value > 15) {
+        circle.classList.add('status-black');
+    } else {
+        circle.classList.add('status-green');
+    }
+}

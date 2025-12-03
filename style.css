@@ -132,7 +132,7 @@ body {
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    border: 1px solid #7f8c8d;
+    border: 2px solid #7f8c8d;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -508,4 +508,89 @@ td:first-child {
     .plate-item {
         break-inside: avoid;
     }
+}
+
+/* --- Add to style.css --- */
+
+/* 1. Remove borders from the input so it looks like text */
+.manual-input {
+    width: 35px;
+    border: none;
+    text-align: center;
+    background: transparent;
+    font-size: 11px;
+    font-weight: bold;
+    color: inherit; /* Text color changes with the circle */
+    font-family: inherit;
+}
+
+.manual-input:focus {
+    outline: none;
+    background-color: #f0f0f0; /* Slight highlight when typing */
+}
+
+/* 2. Condition: <= 15% (Green) */
+.well-circle.status-green {
+    border-color: #27ae60 !important; /* Green Border */
+    background-color: #eafaf1;        /* Light Green Background */
+    color: #27ae60;                   /* Green Text */
+}
+
+/* 3. Condition: > 15% (Black) */
+.well-circle.status-black {
+    border-color: #000000 !important;
+    background-color: #b9b9b9 !important;
+    color: #ffffff; /* White text for contrast */
+}
+
+/* 4. Ensure background colors print correctly */
+@media print {
+    .well-circle.status-black, 
+    .well-circle.status-green {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    /* Hide input spinner arrows on print */
+    .manual-input::-webkit-outer-spin-button,
+    .manual-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+
+/* --- Add to the bottom of style.css --- */
+
+/* 1. Hide the up/down arrows (spinners) in Chrome, Safari, Edge, Opera */
+.manual-input::-webkit-outer-spin-button,
+.manual-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* 2. Hide the spinners in Firefox */
+.manual-input {
+    -moz-appearance: textfield;
+}
+
+/* 3. Ensure the text remains perfectly centered */
+.manual-input {
+    text-align: center;
+    width: 100%; /* Use full width of the circle */
+    height: 100%; /* Use full height */
+    padding: 0;
+    margin: 0;
+    background: transparent; /* Ensure no white box covers the circle color */
+}
+
+.percent-symbol {
+    font-size: 10px;
+    font-weight: bold;
+    pointer-events: none; /* Let clicks pass through to the circle */
+}
+
+/* Adjust input width so it shares space with the % symbol */
+.manual-input {
+    width: 20px; /* Smaller width to make room for % */
+    text-align: right; /* Align number to the right, next to % */
 }
