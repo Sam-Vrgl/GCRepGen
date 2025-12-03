@@ -564,6 +564,7 @@ td:first-child {
 
 .manual-input {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .manual-input {

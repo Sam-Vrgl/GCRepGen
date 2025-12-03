@@ -17,6 +17,18 @@ function handleFileSelect(evt) {
         const worksheet = workbook.Sheets[firstSheetName];
         currentData = XLSX.utils.sheet_to_json(worksheet);
 
+        if (currentData.length > 0) {
+            const firstRowDay = currentData[0]["Day"];
+
+            if (firstRowDay !== undefined) {
+                const cleanDay = firstRowDay.toString().replace(/D/i, '');
+
+                const daySpan = document.getElementById('dayNumSpan');
+                if (daySpan) {
+                    daySpan.textContent = cleanDay;
+                }
+            }
+        }
         updateDisplay();
     };
     reader.readAsArrayBuffer(file);
