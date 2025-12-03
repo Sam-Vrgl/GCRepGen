@@ -13,7 +13,6 @@ function handleFileSelect(evt) {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
 
-        // Assume first sheet
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         currentData = XLSX.utils.sheet_to_json(worksheet);
@@ -41,7 +40,6 @@ function updateDisplay() {
 function calculateStats(data) {
     const wells = {};
 
-    // Group data by Well
     data.forEach(row => {
         const well = row.Well;
         if (!well) return;
@@ -60,7 +58,6 @@ function calculateStats(data) {
     const stdDevRow = { Metric: "Standard Deviation" };
     const stdDevPercentRow = { Metric: "Standard Deviation %" };
 
-    // Generate all wells A1-D6
     const allWells = [];
     const rows = ['A', 'B', 'C', 'D'];
     for (let r of rows) {
@@ -79,18 +76,15 @@ function calculateStats(data) {
             return;
         }
 
-        // Average
         const sum = values.reduce((a, b) => a + b, 0);
         const avg = sum / values.length;
         averageRow[well] = avg;
 
-        // Median
         values.sort((a, b) => a - b);
         const mid = Math.floor(values.length / 2);
         const median = values.length % 2 !== 0 ? values[mid] : (values[mid - 1] + values[mid]) / 2;
         medianRow[well] = median;
 
-        // Standard Deviation (Population)
         const squareDiffs = values.map(value => {
             const diff = value - avg;
             return diff * diff;
@@ -99,7 +93,6 @@ function calculateStats(data) {
         const stdDev = Math.sqrt(avgSquareDiff);
         stdDevRow[well] = stdDev;
 
-        // Standard Deviation Percentage
         const stdDevPercent = (stdDev / avg) * 100;
         stdDevPercentRow[well] = stdDevPercent;
     });
@@ -119,12 +112,10 @@ function displayResults(resultData, rawData) {
 
     document.getElementById('results').classList.remove('hidden');
 
-    // 1. Generate Violin Plot
     setTimeout(() => {
         generateViolinPlot(wellsData, allWells);
     }, 0);
 
-    // 2. Generate Main Plate Diagram
     const plateContainer = document.getElementById('plateDiagram');
     plateContainer.innerHTML = '';
 
@@ -158,7 +149,7 @@ function displayResults(resultData, rawData) {
         `;
         plateContainer.appendChild(wellDiv);
     });
-// 3. Generate Manual Input Plate Diagram
+
     const plateContainer2 = document.getElementById('plateDiagram2');
     plateContainer2.innerHTML = '';
     
@@ -166,7 +157,6 @@ function displayResults(resultData, rawData) {
         const wellDiv = document.createElement('div');
         wellDiv.className = 'well-container';
         
-        // We add a wrapper to hold the input and the % sign side-by-side
         wellDiv.innerHTML = `
             <div class="well-label">${well}</div>
             <div class="well-circle" style="flex-direction: row; gap: 1px;">
@@ -181,7 +171,6 @@ function displayResults(resultData, rawData) {
         plateContainer2.appendChild(wellDiv);
     });
 
-    // 4. Generate Table
     const tableContainer = document.getElementById('statsTableContainer');
     tableContainer.innerHTML = '';
 
@@ -189,7 +178,6 @@ function displayResults(resultData, rawData) {
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
 
-    // Header Row
     const headerRow = document.createElement('tr');
     const thMetric = document.createElement('th');
     thMetric.textContent = '';
@@ -202,7 +190,6 @@ function displayResults(resultData, rawData) {
     });
     thead.appendChild(headerRow);
 
-    // Data Rows
     const rowsToShow = ["Average (µm)", "Median"];
 
     rowsToShow.forEach(metricName => {
@@ -233,11 +220,6 @@ function displayResults(resultData, rawData) {
 function generateViolinPlot(wellsData, allWells) {
     const plotData = [];
 
-    // Create a trace for each well
-    // To make it look like the image (single color, side by side), 
-    // we can use a single trace with 'x' as well names and 'y' as values, 
-    // or multiple traces. Plotly violin handles 'x' categories well.
-
     const xValues = [];
     const yValues = [];
 
@@ -256,11 +238,14 @@ function generateViolinPlot(wellsData, allWells) {
         x: xValues,
         y: yValues,
         points: false,
+        width: 0.85,
+
         box: {
             visible: true
         },
         line: {
-            color: 'black'
+            color: 'black',
+            width: 1
         },
         fillcolor: '#8dd3c7',
         opacity: 0.6,
@@ -274,7 +259,9 @@ function generateViolinPlot(wellsData, allWells) {
         title: "",
         yaxis: {
             zeroline: false,
-            title: "Spheroid Diameter (µm)"
+            title: "Spheroid Diameter (µm)",
+            range: [50, 500],
+            fixedrange: true
         },
         xaxis: {
             title: "Wells ID"
@@ -311,21 +298,15 @@ window.onafterprint = function() {
 };
 
 function handleManualInput(inputElement) {
-    // Get the value typed by the user
     const value = parseFloat(inputElement.value);
-    
-    // Find the parent circle to change its color
     const circle = inputElement.closest('.well-circle');
     
-    // Remove existing status classes
     circle.classList.remove('status-green', 'status-black');
 
-    // If empty or invalid, leave it default gray
     if (isNaN(value) || inputElement.value === '') {
         return;
     }
 
-    // Apply logic: > 15 is Black, otherwise Green
     if (value > 15) {
         circle.classList.add('status-black');
     } else {

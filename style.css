@@ -95,7 +95,7 @@ body {
     text-align: center;
 }
 
-/* Plate Diagram Styles */
+
 .plate-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -153,7 +153,7 @@ body {
     white-space: nowrap;
 }
 
-/* Table Styles */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -171,7 +171,7 @@ td {
 
 th {
     background-color: #d1e7dd;
-    /* Light green like in image */
+
     color: #2c3e50;
     font-weight: bold;
 }
@@ -289,7 +289,7 @@ td:first-child {
     text-align: center;
 }
 
-/* Plate Diagram Styles */
+
 .plate-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -347,7 +347,7 @@ td:first-child {
     white-space: nowrap;
 }
 
-/* Table Styles */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -365,7 +365,6 @@ td {
 
 th {
     background-color: #d1e7dd;
-    /* Light green like in image */
     color: #2c3e50;
     font-weight: bold;
 }
@@ -435,8 +434,8 @@ td:first-child {
     .left-panel {
         flex: 0 0 55%;
         width: 55%;
-        max-width: 55%; /* STRICTLY enforce width */
-        overflow: hidden; /* Cut off anything that tries to escape */
+        max-width: 55%;
+        overflow: hidden;
     }
 
     .right-panel {
@@ -444,15 +443,15 @@ td:first-child {
         width: 42%;
     }
 
-    #violinPlot, 
-    .js-plotly-plot, 
+    #violinPlot,
+    .js-plotly-plot,
     .plot-container {
         width: 100% !important;
         max-width: 100% !important;
-        height: 400px !important; /* Force a shorter height for print */
+        height: 400px !important;
     }
 
-    /* Fix the SVG inside Plotly to stop it from expanding */
+
     .js-plotly-plot .plotly svg {
         width: 100% !important;
         height: 100% !important;
@@ -502,7 +501,7 @@ td:first-child {
         padding: 3px 4px;
     }
 
-    /* Page break avoidance */
+
     .dashboard-grid,
     table,
     .plate-item {
@@ -510,9 +509,6 @@ td:first-child {
     }
 }
 
-/* --- Add to style.css --- */
-
-/* 1. Remove borders from the input so it looks like text */
 .manual-input {
     width: 35px;
     border: none;
@@ -520,38 +516,38 @@ td:first-child {
     background: transparent;
     font-size: 11px;
     font-weight: bold;
-    color: inherit; /* Text color changes with the circle */
+    color: inherit;
     font-family: inherit;
 }
 
 .manual-input:focus {
     outline: none;
-    background-color: #f0f0f0; /* Slight highlight when typing */
+    background-color: #f0f0f0;
 }
 
-/* 2. Condition: <= 15% (Green) */
+
 .well-circle.status-green {
-    border-color: #27ae60 !important; /* Green Border */
-    background-color: #eafaf1;        /* Light Green Background */
-    color: #27ae60;                   /* Green Text */
+    border-color: #27ae60 !important;
+    background-color: #eafaf1;
+    color: #27ae60;
 }
 
-/* 3. Condition: > 15% (Black) */
+
 .well-circle.status-black {
     border-color: #000000 !important;
     background-color: #b9b9b9 !important;
-    color: #ffffff; /* White text for contrast */
+    color: #ffffff;
 }
 
-/* 4. Ensure background colors print correctly */
+
 @media print {
-    .well-circle.status-black, 
+
+    .well-circle.status-black,
     .well-circle.status-green {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
-    
-    /* Hide input spinner arrows on print */
+
     .manual-input::-webkit-outer-spin-button,
     .manual-input::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -559,38 +555,33 @@ td:first-child {
     }
 }
 
-/* --- Add to the bottom of style.css --- */
 
-/* 1. Hide the up/down arrows (spinners) in Chrome, Safari, Edge, Opera */
 .manual-input::-webkit-outer-spin-button,
 .manual-input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-/* 2. Hide the spinners in Firefox */
 .manual-input {
     -moz-appearance: textfield;
 }
 
-/* 3. Ensure the text remains perfectly centered */
 .manual-input {
     text-align: center;
-    width: 100%; /* Use full width of the circle */
-    height: 100%; /* Use full height */
+    width: 100%;
+    height: 100%;
     padding: 0;
     margin: 0;
-    background: transparent; /* Ensure no white box covers the circle color */
+    background: transparent;
 }
 
 .percent-symbol {
     font-size: 10px;
     font-weight: bold;
-    pointer-events: none; /* Let clicks pass through to the circle */
+    pointer-events: none;
 }
 
-/* Adjust input width so it shares space with the % symbol */
 .manual-input {
-    width: 20px; /* Smaller width to make room for % */
-    text-align: right; /* Align number to the right, next to % */
+    width: 20px;
+    text-align: right;
 }
