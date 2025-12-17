@@ -1,7 +1,26 @@
+:root {
+    --bg-color-main: #f4f4f9;
+    --text-color-main: #333;
+    --border-color-light: #ccc;
+    --text-color-secondary: #555;
+    --bg-color-white: #fff;
+    --border-color-medium: #bdc3c7;
+    --border-color-placeholder: #e0e0e0;
+    --border-color-well: #7f8c8d;
+    --text-color-dark: #2c3e50;
+    --bg-color-header: #fbcfda;
+    --bg-color-focus: #f0f0f0;
+    --status-green: #27ae60;
+    --bg-status-green: #eafaf1;
+    --status-black: #000000;
+    --bg-status-black: #b9b9b9;
+    --text-color-white: #ffffff;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    background-color: var(--bg-color-main);
+    color: var(--text-color-main);
     margin: 0;
     padding: 20px;
 }
@@ -27,7 +46,7 @@ body {
 
 .plate-input-section input {
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color-light);
     border-radius: 4px;
     width: 60px;
     text-align: center;
@@ -69,7 +88,7 @@ body {
     text-align: center;
 }
 
-#violinPlot {
+.violin-plot {
     width: 100%;
     height: 500px;
 }
@@ -89,7 +108,7 @@ body {
 
 .caption {
     font-size: 12px;
-    color: #555;
+    color: var(--text-color-secondary);
     margin-top: 10px;
     max-width: 300px;
     text-align: center;
@@ -101,18 +120,18 @@ body {
     grid-template-columns: repeat(6, 1fr);
     gap: 8px;
     padding: 15px;
-    background-color: #fff;
+    background-color: var(--bg-color-white);
     border-radius: 20px;
-    border: 1px solid #bdc3c7;
+    border: 1px solid var(--border-color-medium);
     width: fit-content;
 }
 
 .placeholder-plate .well-circle {
-    border-color: #e0e0e0;
+    border-color: var(--border-color-placeholder);
 }
 
 .placeholder-plate .well-circle .stats-text {
-    color: #ccc;
+    color: var(--border-color-light);
 }
 
 .well-container {
@@ -124,7 +143,7 @@ body {
 
 .well-label {
     font-size: 9px;
-    color: #bdc3c7;
+    color: var(--border-color-medium);
     margin-bottom: 2px;
 }
 
@@ -132,23 +151,23 @@ body {
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    border: 2px solid #7f8c8d;
+    border: 2px solid var(--border-color-well);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
+    background-color: var(--bg-color-white);
 }
 
 .percentage {
     font-size: 10px;
     font-weight: bold;
-    color: #2c3e50;
+    color: var(--text-color-dark);
 }
 
 .stats-text {
     font-size: 7px;
-    color: #555;
+    color: var(--text-color-secondary);
     margin-top: 1px;
     white-space: nowrap;
 }
@@ -158,7 +177,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: #fff;
+    background-color: var(--bg-color-white);
     font-size: 14px;
 }
 
@@ -166,22 +185,22 @@ th,
 td {
     padding: 8px 10px;
     text-align: center;
-    border: 1px solid #bdc3c7;
+    border: 1px solid var(--border-color-medium);
 }
 
 th {
-    background-color: #d1e7dd;
+    background-color: var(--bg-color-header);
 
-    color: #2c3e50;
+    color: var(--text-color-dark);
     font-weight: bold;
 }
 
 tr:first-child th {
-    background-color: #d1e7dd;
+    background-color: var(--bg-color-header);
 }
 
 td:first-child {
-    background-color: #fff;
+    background-color: var(--bg-color-white);
     font-weight: bold;
     text-align: left;
 }
@@ -191,11 +210,11 @@ td:first-child {
 }
 
 .custom-file-upload {
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color-light);
     display: inline-block;
     padding: 8px 12px;
     cursor: pointer;
-    background-color: #fff;
+    background-color: var(--bg-color-white);
     border-radius: 4px;
     font-weight: 500;
 }
@@ -221,7 +240,7 @@ td:first-child {
 
 .plate-input-section input {
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color-light);
     border-radius: 4px;
     width: 60px;
     text-align: center;
@@ -283,7 +302,7 @@ td:first-child {
 
 .caption {
     font-size: 12px;
-    color: #555;
+    color: var(--text-color-secondary);
     margin-top: 10px;
     max-width: 300px;
     text-align: center;
@@ -295,18 +314,18 @@ td:first-child {
     grid-template-columns: repeat(6, 1fr);
     gap: 8px;
     padding: 15px;
-    background-color: #fff;
+    background-color: var(--bg-color-white);
     border-radius: 20px;
-    border: 1px solid #bdc3c7;
+    border: 1px solid var(--border-color-medium);
     width: fit-content;
 }
 
 .placeholder-plate .well-circle {
-    border-color: #e0e0e0;
+    border-color: var(--border-color-placeholder);
 }
 
 .placeholder-plate .well-circle .stats-text {
-    color: #ccc;
+    color: var(--border-color-light);
 }
 
 .well-container {
@@ -318,7 +337,7 @@ td:first-child {
 
 .well-label {
     font-size: 9px;
-    color: #bdc3c7;
+    color: var(--border-color-medium);
     margin-bottom: 2px;
 }
 
@@ -326,23 +345,23 @@ td:first-child {
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    border: 1px solid #7f8c8d;
+    border: 1px solid var(--border-color-well);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
+    background-color: var(--bg-color-white);
 }
 
 .percentage {
     font-size: 10px;
     font-weight: bold;
-    color: #2c3e50;
+    color: var(--text-color-dark);
 }
 
 .stats-text {
     font-size: 7px;
-    color: #555;
+    color: var(--text-color-secondary);
     margin-top: 1px;
     white-space: nowrap;
 }
@@ -352,7 +371,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: #fff;
+    background-color: var(--bg-color-white);
     font-size: 14px;
 }
 
@@ -360,21 +379,21 @@ th,
 td {
     padding: 8px 10px;
     text-align: center;
-    border: 1px solid #bdc3c7;
+    border: 1px solid var(--border-color-medium);
 }
 
 th {
-    background-color: #d1e7dd;
-    color: #2c3e50;
+    background-color: var(--bg-color-header);
+    color: var(--text-color-dark);
     font-weight: bold;
 }
 
 tr:first-child th {
-    background-color: #d1e7dd;
+    background-color: var(--bg-color-header);
 }
 
 td:first-child {
-    background-color: #fff;
+    background-color: var(--bg-color-white);
     font-weight: bold;
     text-align: left;
 }
@@ -384,11 +403,11 @@ td:first-child {
 }
 
 .custom-file-upload {
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color-light);
     display: inline-block;
     padding: 8px 12px;
     cursor: pointer;
-    background-color: #fff;
+    background-color: var(--bg-color-white);
     border-radius: 4px;
     font-weight: 500;
 }
@@ -397,6 +416,14 @@ td:first-child {
     display: none;
 }
 
+.report-page {
+    page-break-after: always;
+    break-after: page;
+    margin-bottom: 50px;
+    padding-top: 20px;
+}
+
+
 @media print {
     @page {
         size: landscape;
@@ -404,7 +431,7 @@ td:first-child {
     }
 
     body {
-        background-color: #fff;
+        background-color: var(--bg-color-white);
         padding: 0;
         margin: 0;
         -webkit-print-color-adjust: exact !important;
@@ -443,7 +470,7 @@ td:first-child {
         width: 42%;
     }
 
-    #violinPlot,
+    .violin-plot,
     .js-plotly-plot,
     .plot-container {
         width: 100% !important;
@@ -522,21 +549,21 @@ td:first-child {
 
 .manual-input:focus {
     outline: none;
-    background-color: #f0f0f0;
+    background-color: var(--bg-color-focus);
 }
 
 
 .well-circle.status-green {
-    border-color: #27ae60 !important;
-    background-color: #eafaf1;
-    color: #27ae60;
+    border-color: var(--status-green) !important;
+    background-color: var(--bg-status-green);
+    color: var(--status-green);
 }
 
 
 .well-circle.status-black {
-    border-color: #000000 !important;
-    background-color: #b9b9b9 !important;
-    color: #ffffff;
+    border-color: var(--status-black) !important;
+    background-color: var(--bg-status-black) !important;
+    color: var(--text-color-white);
 }
 
 

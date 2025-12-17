@@ -17,7 +17,7 @@
                 <label for="fileInput" class="custom-file-upload">
                     Upload Excel File
                 </label>
-                <input type="file" id="fileInput" accept=".xlsx, .xls" />
+                <input type="file" id="fileInput" accept=".xlsx, .xls" multiple />
             </div>
             <div class="plate-input-section">
                 <label for="plateNumber">Plate Number:</label>
@@ -26,35 +26,7 @@
             <button id="exportBtn" class="custom-file-upload" style="margin-left: 20px;">Export PDF</button>
         </div>
 
-        <div id="results" class="hidden">
-            <div class="dashboard-grid">
-                <div class="left-panel">
-                    <h3 class="chart-title">Analysis of the distribution of spheroid diameters per well on
-                        plate <span id="plateNumSpan">1</span> at Day <span id="dayNumSpan">--</span> (J-2 before shipment)</h3>
-                    <div id="violinPlot"></div>
-                </div>
-
-                <div class="right-panel">
-                    <h1 id="mainTitle" class="plate-title">PLATE 1</h1>
-
-                    <div class="plates-row">
-                        <div class="plate-item">
-                            <div id="plateDiagram" class="plate-grid"></div>
-                            <p class="caption">Average organoids diameter and standard deviation values and
-                                standard deviation percentage</p>
-                        </div>
-
-                        <div class="plate-item">
-                            <div id="plateDiagram2" class="plate-grid placeholder-plate"></div>
-                            <p class="caption">Percentage of nonconform organoids (passed in 2D under the
-                                pattern)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="statsTableContainer"></div>
-        </div>
+        <div id="results" class="hidden"></div>
     </div>
     <script src="script.js"></script>
 </body>

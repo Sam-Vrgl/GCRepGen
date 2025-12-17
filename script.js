@@ -2,51 +2,148 @@ document.getElementById('fileInput').addEventListener('change', handleFileSelect
 document.getElementById('plateNumber').addEventListener('input', handlePlateNumberChange, false);
 document.getElementById('exportBtn').addEventListener('click', () => window.print(), false);
 
-let currentData = null;
+let allReportsData = [];
 
 function handleFileSelect(evt) {
-    const file = evt.target.files[0];
-    if (!file) return;
+    const files = evt.target.files;
+    if (!files || files.length === 0) return;
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
+    allReportsData = [];
+    document.getElementById('results').innerHTML = ''; // Clear previous results
+    document.getElementById('results').classList.add('hidden');
 
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        currentData = XLSX.utils.sheet_to_json(worksheet);
+    const fileReaders = [];
 
-        if (currentData.length > 0) {
-            const firstRowDay = currentData[0]["Day"];
-
-            if (firstRowDay !== undefined) {
-                const cleanDay = firstRowDay.toString().replace(/D/i, '');
-
-                const daySpan = document.getElementById('dayNumSpan');
-                if (daySpan) {
-                    daySpan.textContent = cleanDay;
+    // Process each file
+    Array.from(files).forEach(file => {
+        fileReaders.push(new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    resolve({ fileName: file.name, data: jsonData });
+                } catch (err) {
+                    console.error("Error parsing file", file.name, err);
+                    resolve(null); // Resolve with null to continue other files
                 }
-            }
-        }
-        updateDisplay();
-    };
-    reader.readAsArrayBuffer(file);
+            };
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(file);
+        }));
+    });
+
+    Promise.all(fileReaders).then(results => {
+        // Filter out any failed reads
+        allReportsData = results.filter(r => r !== null);
+        renderAllReports();
+    }).catch(err => {
+        console.error("Error reading files:", err);
+        alert("Error reading files. See console for details.");
+    });
 }
 
 function handlePlateNumberChange(evt) {
-    const plateNum = evt.target.value;
-    document.getElementById('mainTitle').textContent = `PLATE ${plateNum}`;
-    const plateNumSpan = document.getElementById('plateNumSpan');
-    if (plateNumSpan) {
-        plateNumSpan.textContent = plateNum;
-    }
+    updatePlateNumbers();
 }
 
-function updateDisplay() {
-    if (!currentData) return;
-    const stats = calculateStats(currentData);
-    displayResults(stats, currentData);
+function updatePlateNumbers() {
+    const startPlateNum = parseInt(document.getElementById('plateNumber').value, 10) || 1;
+    
+    allReportsData.forEach((_, index) => {
+        const plateNum = startPlateNum + index;
+        const mainTitle = document.getElementById(`mainTitle-${index}`);
+        const plateNumSpan = document.getElementById(`plateNumSpan-${index}`);
+        
+        if (mainTitle) mainTitle.textContent = `PLATE ${plateNum}`;
+        if (plateNumSpan) plateNumSpan.textContent = plateNum;
+    });
+}
+
+function renderAllReports() {
+    if (allReportsData.length === 0) return;
+
+    const resultsContainer = document.getElementById('results');
+    resultsContainer.innerHTML = '';
+    resultsContainer.classList.remove('hidden');
+
+    allReportsData.forEach((reportData, index) => {
+        createReportDOM(reportData.data, index);
+    });
+    
+    // Update plate numbers after rendering
+    updatePlateNumbers();
+}
+
+function createReportDOM(data, index) {
+    const stats = calculateStats(data);
+    const resultsContainer = document.getElementById('results');
+    
+    // Extract Day
+    let day = "--";
+    if (data.length > 0) {
+        const firstRowDay = data[0]["Day"];
+        if (firstRowDay !== undefined) {
+             day = firstRowDay.toString().replace(/D/i, '');
+        }
+    }
+
+    const reportPage = document.createElement('div');
+    reportPage.className = 'report-page';
+    reportPage.id = `report-${index}`;
+
+    // HTML Structure Template
+    // Note: IDs must be unique, so we append the index
+    reportPage.innerHTML = `
+        <div class="dashboard-grid">
+            <div class="left-panel">
+                <h3 class="chart-title">Analysis of the distribution of spheroid diameters per well on
+                    plate <span id="plateNumSpan-${index}">1</span> at Day <span id="dayNumSpan-${index}">${day}</span> (J-2 before shipment)</h3>
+                <div id="violinPlot-${index}" class="violin-plot"></div>
+            </div>
+
+            <div class="right-panel">
+                <h1 id="mainTitle-${index}" class="plate-title">PLATE 1</h1>
+
+                <div class="plates-row">
+                    <div class="plate-item">
+                        <div id="plateDiagram-${index}" class="plate-grid"></div>
+                        <p class="caption">Average organoids diameter and standard deviation values and
+                            standard deviation percentage</p>
+                    </div>
+
+                    <div class="plate-item">
+                        <div id="plateDiagram2-${index}" class="plate-grid placeholder-plate"></div>
+                        <p class="caption">Percentage of nonconform organoids (passed in 2D under the
+                            pattern)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="statsTableContainer-${index}"></div>
+    `;
+
+    resultsContainer.appendChild(reportPage);
+
+    // Render Components
+    // 1. Violin Plot
+    // Use setTimeout to ensure DOM is ready and layout can be calculated
+    setTimeout(() => {
+        generateViolinPlot(`violinPlot-${index}`, stats.wellsData, stats.allWells);
+    }, 0);
+
+    // 2. Plate Diagram (Stats)
+    renderPlateDiagram(stats, `plateDiagram-${index}`);
+
+    // 3. Plate Diagram (Manual Input)
+    renderManualPlate(`plateDiagram2-${index}`, stats.allWells);
+
+    // 4. Stats Table
+    renderStatsTable(stats, `statsTableContainer-${index}`);
 }
 
 function calculateStats(data) {
@@ -117,19 +214,9 @@ function calculateStats(data) {
     return { stats, allWells, wellsData: wells };
 }
 
-function displayResults(resultData, rawData) {
-    const stats = resultData.stats;
-    const allWells = resultData.allWells;
-    const wellsData = resultData.wellsData;
-
-    document.getElementById('results').classList.remove('hidden');
-
-    setTimeout(() => {
-        generateViolinPlot(wellsData, allWells);
-    }, 0);
-
-    const plateContainer = document.getElementById('plateDiagram');
-    plateContainer.innerHTML = '';
+function renderPlateDiagram(statsData, containerId) {
+    const container = document.getElementById(containerId);
+    const { stats, allWells } = statsData;
 
     const avgRow = stats.find(r => r.Metric === "Average (µm)");
     const stdRow = stats.find(r => r.Metric === "Standard Deviation");
@@ -159,11 +246,12 @@ function displayResults(resultData, rawData) {
                 ${circleContent}
             </div>
         `;
-        plateContainer.appendChild(wellDiv);
+        container.appendChild(wellDiv);
     });
+}
 
-    const plateContainer2 = document.getElementById('plateDiagram2');
-    plateContainer2.innerHTML = '';
+function renderManualPlate(containerId, allWells) {
+    const container = document.getElementById(containerId);
     
     allWells.forEach(well => {
         const wellDiv = document.createElement('div');
@@ -180,11 +268,13 @@ function displayResults(resultData, rawData) {
                 <span class="percent-symbol">%</span>
             </div>
         `;
-        plateContainer2.appendChild(wellDiv);
+        container.appendChild(wellDiv);
     });
+}
 
-    const tableContainer = document.getElementById('statsTableContainer');
-    tableContainer.innerHTML = '';
+function renderStatsTable(statsData, containerId) {
+    const container = document.getElementById(containerId);
+    const { stats, allWells } = statsData;
 
     const table = document.createElement('table');
     const thead = document.createElement('thead');
@@ -226,10 +316,10 @@ function displayResults(resultData, rawData) {
 
     table.appendChild(thead);
     table.appendChild(tbody);
-    tableContainer.appendChild(table);
+    container.appendChild(table);
 }
 
-function generateViolinPlot(wellsData, allWells) {
+function generateViolinPlot(elementId, wellsData, allWells) {
     const plotData = [];
 
     const xValues = [];
@@ -259,7 +349,7 @@ function generateViolinPlot(wellsData, allWells) {
             color: 'black',
             width: 1
         },
-        fillcolor: '#8dd3c7',
+        fillcolor: '#fbcfda',
         opacity: 0.6,
         meanline: {
             visible: true
@@ -287,27 +377,11 @@ function generateViolinPlot(wellsData, allWells) {
         showlegend: false
     };
 
-    Plotly.newPlot('violinPlot', [trace], layout, { 
-    displayModeBar: false, 
-    responsive: true 
-});
+    Plotly.newPlot(elementId, [trace], layout, { 
+        displayModeBar: false, 
+        responsive: true 
+    });
 }
-
-window.onbeforeprint = function() {
-    const plotDiv = document.getElementById('violinPlot');
-    Plotly.relayout(plotDiv, {
-        width: 600, 
-        height: 400
-    });
-};
-
-window.onafterprint = function() {
-    const plotDiv = document.getElementById('violinPlot');
-    Plotly.relayout(plotDiv, {
-        width: null,
-        height: 500
-    });
-};
 
 function handleManualInput(inputElement) {
     const value = parseFloat(inputElement.value);
@@ -325,3 +399,25 @@ function handleManualInput(inputElement) {
         circle.classList.add('status-green');
     }
 }
+
+// Print Handlers
+window.onbeforeprint = function() {
+    // Find all violin plots and resizing them
+    const plotDivs = document.querySelectorAll('.violin-plot');
+    plotDivs.forEach(plotDiv => {
+        Plotly.relayout(plotDiv, {
+            width: 600, 
+            height: 400
+        });
+    });
+};
+
+window.onafterprint = function() {
+    const plotDivs = document.querySelectorAll('.violin-plot');
+    plotDivs.forEach(plotDiv => {
+        Plotly.relayout(plotDiv, {
+            width: null,
+            height: 500
+        });
+    });
+};
