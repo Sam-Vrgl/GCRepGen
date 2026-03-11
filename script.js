@@ -9,12 +9,11 @@ function handleFileSelect(evt) {
     if (!files || files.length === 0) return;
 
     allReportsData = [];
-    document.getElementById('results').innerHTML = ''; // Clear previous results
+    document.getElementById('results').innerHTML = '';
     document.getElementById('results').classList.add('hidden');
 
     const fileReaders = [];
 
-    // Process each file
     Array.from(files).forEach(file => {
         fileReaders.push(new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -28,7 +27,7 @@ function handleFileSelect(evt) {
                     resolve({ fileName: file.name, data: jsonData });
                 } catch (err) {
                     console.error("Error parsing file", file.name, err);
-                    resolve(null); // Resolve with null to continue other files
+                    resolve(null);
                 }
             };
             reader.onerror = reject;
@@ -37,7 +36,6 @@ function handleFileSelect(evt) {
     });
 
     Promise.all(fileReaders).then(results => {
-        // Filter out any failed reads
         allReportsData = results.filter(r => r !== null);
         renderAllReports();
     }).catch(err => {
@@ -74,7 +72,6 @@ function renderAllReports() {
         createReportDOM(reportData.data, index);
     });
     
-    // Update plate numbers after rendering
     updatePlateNumbers();
 }
 
@@ -82,7 +79,6 @@ function createReportDOM(data, index) {
     const stats = calculateStats(data);
     const resultsContainer = document.getElementById('results');
     
-    // Extract Day
     let day = "--";
     if (data.length > 0) {
         const firstRowDay = data[0]["Day"];
@@ -95,8 +91,6 @@ function createReportDOM(data, index) {
     reportPage.className = 'report-page';
     reportPage.id = `report-${index}`;
 
-    // HTML Structure Template
-    // Note: IDs must be unique, so we append the index
     reportPage.innerHTML = `
         <div class="dashboard-grid">
             <div class="left-panel">
@@ -129,20 +123,14 @@ function createReportDOM(data, index) {
 
     resultsContainer.appendChild(reportPage);
 
-    // Render Components
-    // 1. Violin Plot
-    // Use setTimeout to ensure DOM is ready and layout can be calculated
     setTimeout(() => {
         generateViolinPlot(`violinPlot-${index}`, stats.wellsData, stats.allWells);
     }, 0);
 
-    // 2. Plate Diagram (Stats)
     renderPlateDiagram(stats, `plateDiagram-${index}`);
 
-    // 3. Plate Diagram (Manual Input)
     renderManualPlate(`plateDiagram2-${index}`, stats.allWells);
 
-    // 4. Stats Table
     renderStatsTable(stats, `statsTableContainer-${index}`);
 }
 
@@ -400,9 +388,7 @@ function handleManualInput(inputElement) {
     }
 }
 
-// Print Handlers
 window.onbeforeprint = function() {
-    // Find all violin plots and resizing them
     const plotDivs = document.querySelectorAll('.violin-plot');
     plotDivs.forEach(plotDiv => {
         Plotly.relayout(plotDiv, {
