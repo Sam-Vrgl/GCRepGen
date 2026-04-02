@@ -15,6 +15,7 @@
     --status-black: #000000;
     --bg-status-black: #b9b9b9;
     --text-color-white: #fffffe;
+    --report-max-width: 1400px;
 }
 
 body {
@@ -25,11 +26,6 @@ body {
     padding: 20px;
 }
 
-.container {
-    max-width: 1600px;
-    margin: 0 auto;
-    text-align: center;
-}
 
 .header-controls {
     display: flex;
@@ -91,6 +87,7 @@ body {
 .violin-plot {
     width: 100%;
     height: 500px;
+    margin-bottom: 20px;
 }
 
 .plates-row {
@@ -176,7 +173,7 @@ body {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 40px;
     background-color: var(--bg-color-white);
     font-size: 14px;
 }
@@ -220,9 +217,10 @@ td:first-child {
 }
 
 .container {
-    max-width: 1600px;
+    max-width: var(--report-max-width);
     margin: 0 auto;
     text-align: center;
+    /* max-height: 500px; */
 }
 
 .header-controls {
@@ -417,19 +415,23 @@ td:first-child {
 }
 
 .report-page {
+    width: 100%;
+    max-width: var(--report-max-width);
     page-break-after: always;
     break-after: page;
-    margin-bottom: 50px;
+    margin: 0 auto 50px;
     padding-top: 20px;
+    box-sizing: border-box;
 }
 
 
 @media print {
     @page {
         size: landscape;
-        margin: 0.5cm;
+        margin: 0.25cm;
     }
 
+    html,
     body {
         background-color: var(--bg-color-white);
         padding: 0;
@@ -447,6 +449,25 @@ td:first-child {
         width: 100%;
         margin: 0;
         padding: 0;
+        max-height: none;
+    }
+
+    #results {
+        display: block !important;
+    }
+
+    .report-page {
+        width: min(100%, var(--report-max-width));
+        max-width: var(--report-max-width);
+        margin: 0 auto;
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: hidden;
+    }
+
+    .report-page:last-child {
+        page-break-after: auto;
+        break-after: auto;
     }
 
     .dashboard-grid {
@@ -456,6 +477,7 @@ td:first-child {
         align-items: flex-start;
         gap: 10px;
         width: 100%;
+        margin-bottom: 8px;
     }
 
     .left-panel {
@@ -468,6 +490,8 @@ td:first-child {
     .right-panel {
         flex: 0 0 42%;
         width: 42%;
+        padding-top: 28px;
+        box-sizing: border-box;
     }
 
     .violin-plot,
@@ -475,7 +499,7 @@ td:first-child {
     .plot-container {
         width: 100% !important;
         max-width: 100% !important;
-        height: 400px !important;
+        height: 360px !important;
     }
 
 
@@ -486,6 +510,8 @@ td:first-child {
 
     .plates-row {
         gap: 10px;
+        margin-top: 12px;
+        align-items: flex-start;
     }
 
     .plate-grid {
@@ -514,13 +540,13 @@ td:first-child {
 
     .caption {
         font-size: 10px;
-        margin-top: 5px;
+        margin-top: 3px;
     }
 
     table {
         font-size: 9px;
-        width: 98%;
-        margin: 10px auto;
+        width: 100%;
+        margin: 4px 0 0;
     }
 
     th,
