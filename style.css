@@ -608,8 +608,3 @@ td:first-child {
     font-weight: bold;
     pointer-events: none;
 }
-
-.manual-input {
-    width: 20px;
-    text-align: right;
-}
