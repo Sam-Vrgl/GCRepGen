@@ -235,7 +235,6 @@ function renderPlateDiagram(statsData, containerId) {
   const avgRow = stats.find((r) => r.Metric === 'Average (µm)');
   const stdRow = stats.find((r) => r.Metric === 'Standard Deviation');
   const pctRow = stats.find((r) => r.Metric === 'Standard Deviation %');
-  //   const spheroidRow = stats.find((r) => r.Metric === "Number of spheroids%");
 
   allWells.forEach((well) => {
     const wellDiv = document.createElement('div');
@@ -244,7 +243,6 @@ function renderPlateDiagram(statsData, containerId) {
     const avg = avgRow[well];
     const std = stdRow[well];
     const pct = pctRow[well];
-    // const sphero = spheroidRow[well];
 
     let circleContent = '';
     if (avg !== null && avg !== undefined) {
@@ -407,7 +405,7 @@ function generateViolinPlot(elementId, wellsData, allWells) {
 }
 
 function handleManualInput(inputElement) {
-  //function of the number of spheroids
+  //function of the number of spheroids - Not so manual
   const value = parseFloat(inputElement.value);
   const circle = inputElement.closest('.well-circle');
 
