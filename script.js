@@ -1,12 +1,12 @@
 document
-  .getElementById("fileInput")
-  .addEventListener("change", handleFileSelect, false);
+  .getElementById('fileInput')
+  .addEventListener('change', handleFileSelect, false);
 document
-  .getElementById("plateNumber")
-  .addEventListener("input", handlePlateNumberChange, false);
+  .getElementById('plateNumber')
+  .addEventListener('input', handlePlateNumberChange, false);
 document
-  .getElementById("exportBtn")
-  .addEventListener("click", () => window.print(), false);
+  .getElementById('exportBtn')
+  .addEventListener('click', () => window.print(), false);
 
 let allReportsData = [];
 const DETECTION_THRESHOLD = { min: 50, max: 300 }; //µm
@@ -15,8 +15,8 @@ function handleFileSelect(evt) {
   if (!files || files.length === 0) return;
 
   allReportsData = [];
-  document.getElementById("results").innerHTML = "";
-  document.getElementById("results").classList.add("hidden");
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('results').classList.add('hidden');
 
   const fileReaders = [];
 
@@ -27,13 +27,13 @@ function handleFileSelect(evt) {
         reader.onload = function (e) {
           try {
             const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: "array" });
+            const workbook = XLSX.read(data, { type: 'array' });
             const firstSheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[firstSheetName];
             const jsonData = XLSX.utils.sheet_to_json(worksheet);
             resolve({ fileName: file.name, data: jsonData });
           } catch (err) {
-            console.error("Error parsing file", file.name, err);
+            console.error('Error parsing file', file.name, err);
             resolve(null);
           }
         };
@@ -49,8 +49,8 @@ function handleFileSelect(evt) {
       renderAllReports();
     })
     .catch((err) => {
-      console.error("Error reading files:", err);
-      alert("Error reading files. See console for details.");
+      console.error('Error reading files:', err);
+      alert('Error reading files. See console for details.');
     });
 }
 function handlePlateNumberChange(evt) {
@@ -59,7 +59,7 @@ function handlePlateNumberChange(evt) {
 
 function updatePlateNumbers() {
   const startPlateNum =
-    parseInt(document.getElementById("plateNumber").value, 10) || 1;
+    parseInt(document.getElementById('plateNumber').value, 10) || 1;
 
   allReportsData.forEach((_, index) => {
     const plateNum = startPlateNum + index;
@@ -74,9 +74,9 @@ function updatePlateNumbers() {
 function renderAllReports() {
   if (allReportsData.length === 0) return;
 
-  const resultsContainer = document.getElementById("results");
-  resultsContainer.innerHTML = "";
-  resultsContainer.classList.remove("hidden");
+  const resultsContainer = document.getElementById('results');
+  resultsContainer.innerHTML = '';
+  resultsContainer.classList.remove('hidden');
 
   allReportsData.forEach((reportData, index) => {
     createReportDOM(reportData.data, index);
@@ -87,18 +87,18 @@ function renderAllReports() {
 
 function createReportDOM(data, index) {
   const stats = calculateStats(data);
-  const resultsContainer = document.getElementById("results");
+  const resultsContainer = document.getElementById('results');
 
-  let day = "--";
+  let day = '--';
   if (data.length > 0) {
-    const firstRowDay = data[0]["Day"];
+    const firstRowDay = data[0]['Day'];
     if (firstRowDay !== undefined) {
-      day = firstRowDay.toString().replace(/D/i, "");
+      day = firstRowDay.toString().replace(/D/i, '');
     }
   }
 
-  const reportPage = document.createElement("div");
-  reportPage.className = "report-page";
+  const reportPage = document.createElement('div');
+  reportPage.className = 'report-page';
   reportPage.id = `report-${index}`;
 
   reportPage.innerHTML = `
@@ -160,14 +160,14 @@ function calculateStats(data) {
 
   const stats = [];
 
-  const averageRow = { Metric: "Average (µm)" };
-  const medianRow = { Metric: "Median" };
-  const stdDevRow = { Metric: "Standard Deviation" };
-  const stdDevPercentRow = { Metric: "Standard Deviation %" };
-  const numSpheroids = { Metric: "Number of Spheroids" };
+  const averageRow = { Metric: 'Average (µm)' };
+  const medianRow = { Metric: 'Median' };
+  const stdDevRow = { Metric: 'Standard Deviation' };
+  const stdDevPercentRow = { Metric: 'Standard Deviation %' };
+  const numSpheroids = { Metric: 'Number of Spheroids' };
 
   const allWells = [];
-  const rows = ["A", "B", "C", "D"];
+  const rows = ['A', 'B', 'C', 'D'];
   for (let r of rows) {
     for (let c = 1; c <= 6; c++) {
       allWells.push(r + c);
@@ -232,21 +232,21 @@ function renderPlateDiagram(statsData, containerId) {
   const container = document.getElementById(containerId);
   const { stats, allWells } = statsData;
 
-  const avgRow = stats.find((r) => r.Metric === "Average (µm)");
-  const stdRow = stats.find((r) => r.Metric === "Standard Deviation");
-  const pctRow = stats.find((r) => r.Metric === "Standard Deviation %");
+  const avgRow = stats.find((r) => r.Metric === 'Average (µm)');
+  const stdRow = stats.find((r) => r.Metric === 'Standard Deviation');
+  const pctRow = stats.find((r) => r.Metric === 'Standard Deviation %');
   //   const spheroidRow = stats.find((r) => r.Metric === "Number of spheroids%");
 
   allWells.forEach((well) => {
-    const wellDiv = document.createElement("div");
-    wellDiv.className = "well-container";
+    const wellDiv = document.createElement('div');
+    wellDiv.className = 'well-container';
 
     const avg = avgRow[well];
     const std = stdRow[well];
     const pct = pctRow[well];
     // const sphero = spheroidRow[well];
 
-    let circleContent = "";
+    let circleContent = '';
     if (avg !== null && avg !== undefined) {
       circleContent = `
                 <div class="percentage">${Math.round(pct)}%</div>
@@ -268,11 +268,11 @@ function renderPlateDiagram(statsData, containerId) {
 
 function renderManualPlate(containerId, allWells, stats) {
   const container = document.getElementById(containerId);
-  const sphRow = stats.find((r) => r.Metric === "Number of Spheroids");
+  const sphRow = stats.find((r) => r.Metric === 'Number of Spheroids');
   allWells.forEach((well) => {
-    const wellDiv = document.createElement("div");
+    const wellDiv = document.createElement('div');
     const spheroidNumber = sphRow[well];
-    wellDiv.className = "well-container";
+    wellDiv.className = 'well-container';
     wellDiv.innerHTML = `
             <div class="well-label">${well}</div>
             <div class="well-circle" style="flex-direction: row; gap: 1px;">
@@ -299,39 +299,39 @@ function renderStatsTable(statsData, containerId) {
   const container = document.getElementById(containerId);
   const { stats, allWells } = statsData;
 
-  const table = document.createElement("table");
-  const thead = document.createElement("thead");
-  const tbody = document.createElement("tbody");
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
 
-  const headerRow = document.createElement("tr");
-  const thMetric = document.createElement("th");
-  thMetric.textContent = "";
+  const headerRow = document.createElement('tr');
+  const thMetric = document.createElement('th');
+  thMetric.textContent = '';
   headerRow.appendChild(thMetric);
 
   allWells.forEach((well) => {
-    const th = document.createElement("th");
+    const th = document.createElement('th');
     th.textContent = well;
     headerRow.appendChild(th);
   });
   thead.appendChild(headerRow);
 
-  const rowsToShow = ["Average (µm)", "Median"];
+  const rowsToShow = ['Average (µm)', 'Median'];
 
   rowsToShow.forEach((metricName) => {
     const rowData = stats.find((r) => r.Metric === metricName);
     if (!rowData) return;
 
-    const tr = document.createElement("tr");
-    const tdMetric = document.createElement("td");
+    const tr = document.createElement('tr');
+    const tdMetric = document.createElement('td');
     tdMetric.textContent = metricName;
-    tdMetric.style.fontWeight = "bold";
-    tdMetric.style.textAlign = "left";
+    tdMetric.style.fontWeight = 'bold';
+    tdMetric.style.textAlign = 'left';
     tr.appendChild(tdMetric);
 
     allWells.forEach((well) => {
-      const td = document.createElement("td");
+      const td = document.createElement('td');
       const val = rowData[well];
-      td.textContent = val !== null && val !== undefined ? Math.round(val) : "";
+      td.textContent = val !== null && val !== undefined ? Math.round(val) : '';
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -359,7 +359,7 @@ function generateViolinPlot(elementId, wellsData, allWells) {
   });
 
   const trace = {
-    type: "violin",
+    type: 'violin',
     x: xValues,
     y: yValues,
     points: false,
@@ -369,27 +369,27 @@ function generateViolinPlot(elementId, wellsData, allWells) {
       visible: true,
     },
     line: {
-      color: "black",
+      color: 'black',
       width: 1,
     },
-    fillcolor: "#fbcfda",
+    fillcolor: '#fbcfda',
     opacity: 0.6,
     meanline: {
       visible: true,
     },
-    x0: "A1",
+    x0: 'A1',
   };
 
   const layout = {
-    title: "",
+    title: '',
     yaxis: {
       zeroline: false,
-      title: "Spheroid Diameter (µm)",
+      title: 'Spheroid Diameter (µm)',
       range: [50, 500],
       fixedrange: true,
     },
     xaxis: {
-      title: "Wells ID",
+      title: 'Wells ID',
     },
     margin: {
       l: 50,
@@ -409,23 +409,23 @@ function generateViolinPlot(elementId, wellsData, allWells) {
 function handleManualInput(inputElement) {
   //function of the number of spheroids
   const value = parseFloat(inputElement.value);
-  const circle = inputElement.closest(".well-circle");
+  const circle = inputElement.closest('.well-circle');
 
-  circle.classList.remove("status-green", "status-black");
+  circle.classList.remove('status-green', 'status-black');
 
-  if (isNaN(value) || inputElement.value === "") {
+  if (isNaN(value) || inputElement.value === '') {
     return;
   }
 
   if (value < 50) {
-    circle.classList.add("status-black");
+    circle.classList.add('status-black');
   } else {
-    circle.classList.add("status-green");
+    circle.classList.add('status-green');
   }
 }
 
 window.onbeforeprint = function () {
-  const plotDivs = document.querySelectorAll(".violin-plot");
+  const plotDivs = document.querySelectorAll('.violin-plot');
   plotDivs.forEach((plotDiv) => {
     Plotly.relayout(plotDiv, {
       width: 600,
@@ -435,7 +435,7 @@ window.onbeforeprint = function () {
 };
 
 window.onafterprint = function () {
-  const plotDivs = document.querySelectorAll(".violin-plot");
+  const plotDivs = document.querySelectorAll('.violin-plot');
   plotDivs.forEach((plotDiv) => {
     Plotly.relayout(plotDiv, {
       width: null,
