@@ -8,6 +8,43 @@ document
   .getElementById('exportBtn')
   .addEventListener('click', () => window.print(), false);
 
+// Auto-load from ?autofile=<url> once all deferred scripts are ready
+window.addEventListener('load', function () {
+  const params = new URLSearchParams(window.location.search);
+  const autofile = params.get('autofile');
+  if (!autofile) {
+    console.warn(
+      '[QC] No autofile param found in URL — manual upload required.',
+    );
+    return;
+  }
+  fetch(autofile)
+    .then((res) => {
+      if (!res.ok)
+        throw new Error(
+          `Failed to fetch results: ${res.status} ${res.statusText}`,
+        );
+      return res.arrayBuffer();
+    })
+    .then((buffer) => {
+      const data = new Uint8Array(buffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      allReportsData = [
+        { fileName: 'Segmentation_Results.xlsx', data: jsonData },
+      ];
+      renderAllReports();
+    })
+    .catch((err) => {
+      console.error('[QC] Error auto-loading results file:', err);
+      alert(
+        'Could not load results automatically. Please upload the file manually.',
+      );
+    });
+});
+
 let allReportsData = [];
 const DETECTION_THRESHOLD = { min: 50, max: 300 }; //µm
 function handleFileSelect(evt) {
